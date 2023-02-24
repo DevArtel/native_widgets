@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -112,4 +115,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+/// Provides API bindings for native widgets
+void initPlatformChannel() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await dotenv.load(fileName: ".env");
+  PlatformApi().handlePlatformChannelRequest();
+}
+
+/// An implementation of [GraphqlApiPlatform] that uses method channels.
+class PlatformApi {
+  /// The method channel used to interact with the native platform.
+  final methodChannel = const MethodChannel('com.lol/api');
+
+  void handlePlatformChannelRequest() {
+    ///
+
+    methodChannel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case 'getData':
+          return Random().nextInt(255);
+        default:
+          throw PlatformException(code: '404');
+      }
+    });
+  }
+
 }

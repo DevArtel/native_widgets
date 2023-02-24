@@ -7,18 +7,40 @@
 
 import WidgetKit
 import SwiftUI
+import Flutter
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date())
+        print("YOYOYO - placeholder")
+        return SimpleEntry(date: Date())
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
+        print("YOYOYO - getSnapshot")
         let entry = SimpleEntry(date: Date())
         completion(entry)
+        
+        print("Create flutter engine")
+        let helloWorldEngine = FlutterEngine(name: "com.lol.widgets")
+
+        helloWorldEngine.run(
+                withEntrypoint: "initPlatformChannel",
+                libraryURI: "lib/main.dart"
+        )
+
+        print("Create flutter engine")
+
+        let channel = FlutterMethodChannel(
+            name: "com.lol/api", binaryMessenger: helloWorldEngine.binaryMessenger
+        )
+        channel.invokeMethod("getData", arguments: "") { result in
+            print("Receive result from flutter engine")
+            print(result)
+        }
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+        print("YOYOYO - getTimeline")
         var entries: [SimpleEntry] = []
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
@@ -31,6 +53,24 @@ struct Provider: TimelineProvider {
 
         let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
+        
+        print("Create flutter engine")
+        let helloWorldEngine = FlutterEngine(name: "com.lol.widgets")
+
+        helloWorldEngine.run(
+                withEntrypoint: "initPlatformChannel",
+                libraryURI: "lib/main.dart"
+        )
+
+        print("Create flutter engine")
+
+        let channel = FlutterMethodChannel(
+            name: "com.lol/api", binaryMessenger: helloWorldEngine.binaryMessenger
+        )
+        channel.invokeMethod("getData", arguments: "") { result in
+            print("Receive result from flutter engine")
+            print(result)
+        }
     }
 }
 
@@ -42,7 +82,7 @@ struct TestWidgetEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        Text(entry.date, style: .time)
+        Text("\(Int.random(in: 0..<1000))")
     }
 }
 
